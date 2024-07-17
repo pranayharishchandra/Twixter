@@ -6,8 +6,9 @@ import { v2 as cloudinary } from "cloudinary";
 export const createPost = async (req, res) => {
 	try {
 		const { text } = req.body;
-		let { img } = req.body;
-		const userId = req.user._id.toString();
+		let   { img }  = req.body;
+		const userId   = req.user._id.toString();
+		//?  converting userId to a string "is not compulsory" when using findById. Mongoose can handle ObjectId types directly. You can simplify your code by removing the .toString() conversion:
 
 		const user = await User.findById(userId);
 		if (!user) return res.status(404).json({ message: "User not found" });
@@ -18,7 +19,7 @@ export const createPost = async (req, res) => {
 
 		if (img) {
 			const uploadedResponse = await cloudinary.uploader.upload(img);
-			img = uploadedResponse.secure_url;
+			      img              = uploadedResponse.secure_url;
 		}
 
 		const newPost = new Post({
@@ -62,9 +63,9 @@ export const deletePost = async (req, res) => {
 
 export const commentOnPost = async (req, res) => {
 	try {
-		const { text } = req.body;
-		const postId = req.params.id;
-		const userId = req.user._id;
+		const { text } = req.body;			// extracing only the text field be de-structuring from the object req.body
+		const postId   = req.params.id; // the post over which comment is being done
+		const userId   = req.user._id;  // user who is writing comment - if user account delete (post deleted)
 
 		if (!text) {
 			return res.status(400).json({ error: "Text field is required" });
@@ -89,33 +90,33 @@ export const commentOnPost = async (req, res) => {
 
 export const likeUnlikePost = async (req, res) => {
 	try {
-		const userId = req.user._id;
-		const { id: postId } = req.params;
+		const userId         = req.user._id; // my (the user seeing post) id
+		const { id: postId } = req.params;   // the post i am linking
 
-		const post = await Post.findById(postId);
+		const post = await Post.findById(postId); // if that post (since we are taking from URL so must be verified)
 
-		if (!post) {
+		if (!post) { // if that really exists then very good otherwise post not found
 			return res.status(404).json({ error: "Post not found" });
 		}
 
-		const userLikedPost = post.likes.includes(userId);
+		const userLikedPost = post.likes.includes(userId); // if i had already liked the post, so now it should get disliked
 
 		if (userLikedPost) {
-			// Unlike post
+			  // Unlike post
 			await Post.updateOne({ _id: postId }, { $pull: { likes: userId } });
 			await User.updateOne({ _id: userId }, { $pull: { likedPosts: postId } });
 
 			const updatedLikes = post.likes.filter((id) => id.toString() !== userId.toString());
 			res.status(200).json(updatedLikes);
 		} else {
-			// Like post
+			  // Like post
 			post.likes.push(userId);
 			await User.updateOne({ _id: userId }, { $push: { likedPosts: postId } });
 			await post.save();
 
 			const notification = new Notification({
 				from: userId,
-				to: post.user,
+				to  : post.user,
 				type: "like",
 			});
 			await notification.save();
@@ -134,11 +135,11 @@ export const getAllPosts = async (req, res) => {
 		const posts = await Post.find()
 			.sort({ createdAt: -1 })
 			.populate({
-				path: "user",
+				path  : "user",
 				select: "-password",
 			})
 			.populate({
-				path: "comments.user",
+				path  : "comments.user",
 				select: "-password",
 			});
 
@@ -162,11 +163,11 @@ export const getLikedPosts = async (req, res) => {
 
 		const likedPosts = await Post.find({ _id: { $in: user.likedPosts } })
 			.populate({
-				path: "user",
+				path  : "user",
 				select: "-password",
 			})
 			.populate({
-				path: "comments.user",
+				path  : "comments.user",
 				select: "-password",
 			});
 
@@ -180,7 +181,7 @@ export const getLikedPosts = async (req, res) => {
 export const getFollowingPosts = async (req, res) => {
 	try {
 		const userId = req.user._id;
-		const user = await User.findById(userId);
+		const user   = await User.findById(userId);
 		if (!user) return res.status(404).json({ error: "User not found" });
 
 		const following = user.following;
@@ -188,11 +189,11 @@ export const getFollowingPosts = async (req, res) => {
 		const feedPosts = await Post.find({ user: { $in: following } })
 			.sort({ createdAt: -1 })
 			.populate({
-				path: "user",
+				path  : "user",
 				select: "-password",
 			})
 			.populate({
-				path: "comments.user",
+				path  : "comments.user",
 				select: "-password",
 			});
 
@@ -213,11 +214,11 @@ export const getUserPosts = async (req, res) => {
 		const posts = await Post.find({ user: user._id })
 			.sort({ createdAt: -1 })
 			.populate({
-				path: "user",
+				path  : "user",
 				select: "-password",
 			})
 			.populate({
-				path: "comments.user",
+				path  : "comments.user",
 				select: "-password",
 			});
 

@@ -1,4 +1,4 @@
-# MERN Stack Project: Build and Deploy a Twitter Clone From Scratch | JWT, Socket.io
+# MERN Stack Project: Twitter Clone | JWT, Socket.io
 <!-- 
 ![Demo App](https://i.ibb.co/f8y9vGS/Group-82.png)
 
@@ -6,21 +6,19 @@
 
 Some Features:
 
--   ⚛️ Tech Stack: React.js, MongoDB, Node.js, Express, Tailwind
--   🔐 Authentication with JSONWEBTOKENS (JWT)
--   🔥 React Query for Data Fetching, Caching etc.
--   👥 Suggested Users to Follow
--   ✍️ Creating Posts
--   🗑️ Deleting Posts
--   💬 Commenting on Posts
--   ❤️ Liking Posts
--   🔒 Delete Posts (if you are the owner)
--   📝 Edit Profile Info
--   🖼️ Edit Cover Image and Profile Image
--   📷 Image Uploads using Cloudinary
--   🔔 Send Notifications
--   🌐 Deployment
--   ⏳ And much more!
+- Tech Stack: React.js, MongoDB, Node.js, Express, Tailwind
+- Authentication with JSONWEBTOKENS (JWT)
+- React Query for Data Fetching, Caching etc.
+- Suggested Users to Follow
+- Creating Posts
+- Deleting Posts
+- Commenting on Posts
+- Liking Posts
+- Delete Posts (if you are the owner)
+- Edit Profile Info
+- Edit Cover Image and Profile Image
+- Image Uploads using Cloudinary
+- Send Notifications
 
 ### Setup .env file
 
