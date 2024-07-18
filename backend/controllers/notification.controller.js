@@ -2,14 +2,15 @@ import Notification from "../models/notification.model.js";
 
 export const getNotifications = async (req, res) => {
 	try {
-		const userId = req.user._id;
+		const userId = req.user._id;  // my id
 
-		const notifications = await Notification.find({ to: userId }).populate({
-			path: "from",
+		const notifications = await Notification.find({ to: userId }) // all the notification sent to me 
+		.populate({
+			path  : "from",
 			select: "username profileImg",
 		});
 
-		await Notification.updateMany({ to: userId }, { read: true });
+		await Notification.updateMany({ to: userId }, { read: true }); // mark all the notification till now sent to me as true 
 
 		res.status(200).json(notifications);
 	} catch (error) {

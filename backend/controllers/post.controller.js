@@ -3,6 +3,11 @@ import Post from "../models/post.model.js";
 import User from "../models/user.model.js";
 import { v2 as cloudinary } from "cloudinary";
 
+/* //*NOTE
+save(): This method is typically used when you've made changes to a document instance that's been fetched into application memory. Since updateOne modifies the database directly, calling save() isn't needed.
+ */
+
+
 export const createPost = async (req, res) => {
 	try {
 		const { text } = req.body;
@@ -79,7 +84,7 @@ export const commentOnPost = async (req, res) => {
 		const comment = { user: userId, text };
 
 		post.comments.push(comment);
-		await post.save();
+		await post.save(); //* document instance. Any changes you make to this instance need to be saved back to the database using the save()
 
 		res.status(200).json(post);
 	} catch (error) {
@@ -99,17 +104,23 @@ export const likeUnlikePost = async (req, res) => {
 			return res.status(404).json({ error: "Post not found" });
 		}
 
-		const userLikedPost = post.likes.includes(userId); // if i had already liked the post, so now it should get disliked
+		const userLikedPost = post.likes.includes(userId); 
+		//* "true" if post already liked
+		// if i had already liked the post, so now it should get disliked
 
 		if (userLikedPost) {
-			  // Unlike post
+		//* Unlike post
 			await Post.updateOne({ _id: postId }, { $pull: { likes: userId } });
 			await User.updateOne({ _id: userId }, { $pull: { likedPosts: postId } });
 
+			//*: (either Fetch the updated post to get the new likes array) OR (filter like you are doing)
+			//* const updatedPost = await Post.findById(postId);
+
 			const updatedLikes = post.likes.filter((id) => id.toString() !== userId.toString());
-			res.status(200).json(updatedLikes);
-		} else {
-			  // Like post
+			res.status(200).json(updatedLikes); //* i could have sent only the post 
+		} 
+		else {  
+		//* Like post
 			post.likes.push(userId);
 			await User.updateOne({ _id: userId }, { $push: { likedPosts: postId } });
 			await post.save();
@@ -119,6 +130,11 @@ export const likeUnlikePost = async (req, res) => {
 				to  : post.user,
 				type: "like",
 			});
+
+			/* // TODO: notification of linking the post should be sent in "real-time" using "Socket.io" along with DB 
+			io.to(post.user).emit('notification', { type: 'like', from: userId, post: postId });
+
+			*/
 			await notification.save();
 
 			const updatedLikes = post.likes;
@@ -180,19 +196,19 @@ export const getLikedPosts = async (req, res) => {
 
 export const getFollowingPosts = async (req, res) => {
 	try {
-		const userId = req.user._id;
-		const user   = await User.findById(userId);
+		const userId = req.user._id; 								//1. my id
+		const user   = await User.findById(userId); //2. getting all info about me 
 		if (!user) return res.status(404).json({ error: "User not found" });
 
-		const following = user.following;
+		const following = user.following; 					//3. all the users(userIds) i am following, array[]
 
-		const feedPosts = await Post.find({ user: { $in: following } })
-			.sort({ createdAt: -1 })
-			.populate({
+		const feedPosts = await Post.find({ user: { $in: following } }) // 4. posts only by the user i follow
+			.sort({ createdAt: -1 })                   //5. results are sorted in descending order by the createdAt field to show the most recent posts first
+			.populate({      													 //6. details of the author of that post 
 				path  : "user",
 				select: "-password",
 			})
-			.populate({
+			.populate({                       		    //7. info of all users commented on that post 
 				path  : "comments.user",
 				select: "-password",
 			});
@@ -206,18 +222,18 @@ export const getFollowingPosts = async (req, res) => {
 
 export const getUserPosts = async (req, res) => {
 	try {
-		const { username } = req.params;
+		const { username } = req.params; // some user 
 
 		const user = await User.findOne({ username });
 		if (!user) return res.status(404).json({ error: "User not found" });
 
-		const posts = await Post.find({ user: user._id })
-			.sort({ createdAt: -1 })
-			.populate({
+		const posts = await Post.find({ user: user._id }) //1. checking the post by that user 
+			.sort({ createdAt: -1 })											 //2. in decending order (latest first)
+			.populate({																		//3. user is a field refering to "User", populating it
 				path  : "user",
 				select: "-password",
 			})
-			.populate({
+			.populate({																	//4. all info of user commented on that post
 				path  : "comments.user",
 				select: "-password",
 			});
