@@ -1,17 +1,17 @@
-import { CiImageOn } from "react-icons/ci";
+import { CiImageOn }        from "react-icons/ci";
 import { BsEmojiSmileFill } from "react-icons/bs";
 import { useRef, useState } from "react";
-import { IoCloseSharp } from "react-icons/io5";
+import { IoCloseSharp }     from "react-icons/io5";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { toast } from "react-hot-toast";
+import { toast }            from "react-hot-toast";
 
 const CreatePost = () => {
 	const [text, setText] = useState("");
-	const [img, setImg] = useState(null);
-	const imgRef = useRef(null);
+	const [img, setImg]   = useState(null);
+	const imgRef          = useRef(null);
 
 	const { data: authUser } = useQuery({ queryKey: ["authUser"] });
-	const queryClient = useQueryClient();
+	const queryClient        = useQueryClient();
 
 	const {
 		mutate: createPost,
@@ -97,10 +97,15 @@ const CreatePost = () => {
 						/>
 						<BsEmojiSmileFill className='fill-primary w-5 h-5 cursor-pointer' />
 					</div>
+
+					{/* accept only images 
+					&& hidden: since it looks very ugly and when we click on the icon, "imgRef" clicks this */}
 					<input type='file' accept='image/*' hidden ref={imgRef} onChange={handleImgChange} />
+
 					<button className='btn btn-primary rounded-full btn-sm text-white px-4'>
 						{isPending ? "Posting..." : "Post"}
 					</button>
+					
 				</div>
 				{isError && <div className='text-red-500'>{error.message}</div>}
 			</form>

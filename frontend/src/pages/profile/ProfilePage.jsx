@@ -62,7 +62,7 @@ const ProfilePage = () => {
 		if (file) {
 			const reader = new FileReader();
 			reader.onload = () => {
-				state === "coverImg" && setCoverImg(reader.result);
+				state === "coverImg"   && setCoverImg(reader.result);
 				state === "profileImg" && setProfileImg(reader.result);
 			};
 			reader.readAsDataURL(file);
@@ -107,13 +107,18 @@ const ProfilePage = () => {
 									</div>
 								)}
 
+								{/* background image, 
+								&& accpets only images
+								&& when clicked on the icon, using "coverImgRef" this gets clicked, so it's made hidden as it looks ugly */}
 								<input
 									type='file'
 									hidden
 									accept='image/*'
 									ref={coverImgRef}
-									onChange={(e) => handleImgChange(e, "coverImg")}
+									onChange={(e) => handleImgChange(e, "coverImg")} // (e, state)
 								/>
+
+								{/* your image - profile photo */}
 								<input
 									type='file'
 									hidden
@@ -121,6 +126,8 @@ const ProfilePage = () => {
 									ref={profileImgRef}
 									onChange={(e) => handleImgChange(e, "profileImg")}
 								/>
+
+
 								{/* USER AVATAR */}
 								<div className='avatar absolute -bottom-16 left-4'>
 									<div className='w-32 rounded-full relative group/avatar'>
