@@ -5,6 +5,7 @@ const useUpdateUserProfile = () => {
 	const queryClient = useQueryClient();
 
 	const { mutateAsync: updateProfile, isPending: isUpdatingProfile } = useMutation({
+
 		mutationFn: async (formData) => {
 			try {
 				const res = await fetch(`/api/users/update`, {
@@ -14,12 +15,15 @@ const useUpdateUserProfile = () => {
 					},
 					body: JSON.stringify(formData),
 				});
+
 				const data = await res.json();
+				
 				if (!res.ok) {
 					throw new Error(data.error || "Something went wrong");
 				}
 				return data;
-			} catch (error) {
+			} 
+			catch (error) {
 				throw new Error(error.message);
 			}
 		},
@@ -39,3 +43,18 @@ const useUpdateUserProfile = () => {
 };
 
 export default useUpdateUserProfile;
+
+/**
+** Note: Using `Promise.all` is fine but not necessary here - as "invalidateQueries" is sync operation
+Promise.all([
+	queryClient.invalidateQueries({ queryKey: ["authUser"] }),
+	queryClient.invalidateQueries({ queryKey: ["userProfile"] }),
+]);
+
+** No need of new Error
+catch (error) {
+	// throw new Error(error.message);
+	throw Error(error.message); // Directly throwing error
+} 
+
+ */
