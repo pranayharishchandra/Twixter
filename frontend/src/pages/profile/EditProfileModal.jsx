@@ -130,7 +130,7 @@ const EditProfileModal = ({ authUser }) => {
 						<button className = 'btn btn-primary rounded-full btn-sm text-white'>
 							{isUpdatingProfile ? "Updating..." : "Update"}
 						</button>
-						
+
 					</form>
 				</div>
 				<form   method    = 'dialog' className = 'modal-backdrop'>
@@ -141,3 +141,34 @@ const EditProfileModal = ({ authUser }) => {
 	);
 };
 export default EditProfileModal;
+
+/*
+* 1. isPending or isUpdating States:
+Definition: These states are booleans that indicate whether a mutation (like updating a profile) is currently being processed.
+* Values: "true" and "false" 
+
+* 2. mutateAsync or updateProfile:
+Definition: These are functions provided by the useMutation hook from react-query.
+Usage: They are used to perform the mutation (e.g., updating user profile data).
+mutateAsync: It is an asynchronous function, which means it returns a promise and can be awaited. This can be useful if you need to perform some actions after the mutation completes.
+updateProfile: In your code, it is just an alias for mutateAsync.
+
+* 3. Use of useEffect:
+Yes, you are correct. Adding default values like an empty string "" is a good practice to avoid undefined values, which can prevent potential errors in your component.
+
+* Improved useEffect Example:
+useEffect(() => {
+	if (authUser) {
+		setFormData({
+			fullName       : authUser.fullName || "",
+			username       : authUser.username || "",
+			email          : authUser.email || "",
+			bio            : authUser.bio || "",
+			link           : authUser.link || "",
+			newPassword    : "",
+			currentPassword: "",
+		});
+	}
+}, [authUser]);
+
+*/

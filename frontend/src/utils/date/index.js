@@ -1,11 +1,11 @@
 export const formatPostDate = (createdAt) => {
-	const currentDate = new Date();
+	const currentDate   = new Date();
 	const createdAtDate = new Date(createdAt);
 
 	const timeDifferenceInSeconds = Math.floor((currentDate - createdAtDate) / 1000);
 	const timeDifferenceInMinutes = Math.floor(timeDifferenceInSeconds / 60);
-	const timeDifferenceInHours = Math.floor(timeDifferenceInMinutes / 60);
-	const timeDifferenceInDays = Math.floor(timeDifferenceInHours / 24);
+	const timeDifferenceInHours   = Math.floor(timeDifferenceInMinutes / 60);
+	const timeDifferenceInDays    = Math.floor(timeDifferenceInHours / 24);
 
 	if (timeDifferenceInDays > 1) {
 		return createdAtDate.toLocaleDateString("en-US", { month: "short", day: "numeric" });

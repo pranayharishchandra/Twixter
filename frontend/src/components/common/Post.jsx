@@ -1,27 +1,30 @@
-import { FaRegComment } from "react-icons/fa";
-import { BiRepost } from "react-icons/bi";
-import { FaRegHeart } from "react-icons/fa";
-import { FaRegBookmark } from "react-icons/fa6";
-import { FaTrash } from "react-icons/fa";
-import { useState } from "react";
-import { Link } from "react-router-dom";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { toast } from "react-hot-toast";
+import { FaRegComment }                          from "react-icons/fa";
+import { BiRepost }                              from "react-icons/bi";
+import { FaRegHeart }                            from "react-icons/fa";
+import { FaRegBookmark }                         from "react-icons/fa6";
+import { FaTrash }                               from "react-icons/fa";
+import { useState }                              from "react";
+import { Link }                                  from "react-router-dom";
 
-import LoadingSpinner from "./LoadingSpinner";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { toast }                                 from "react-hot-toast";
+
+import LoadingSpinner     from "./LoadingSpinner";
 import { formatPostDate } from "../../utils/date";
 
 const Post = ({ post }) => {
+ 
 	const [comment, setComment] = useState("");
-	const { data: authUser } = useQuery({ queryKey: ["authUser"] });
-	const queryClient = useQueryClient();
-	const postOwner = post.user;
-	const isLiked = post.likes.includes(authUser._id);
+	const { data: authUser }    = useQuery({ queryKey: ["authUser"] });
+	const queryClient           = useQueryClient();
+	const postOwner             = post.user;
+	const isLiked               = post.likes.includes(authUser._id); // current user if have liked that post -> true
 
 	const isMyPost = authUser._id === post.user._id;
 
 	const formattedDate = formatPostDate(post.createdAt);
 
+	// 1. DELETE POST - send postid in backend
 	const { mutate: deletePost, isPending: isDeleting } = useMutation({
 		mutationFn: async () => {
 			try {
@@ -44,6 +47,7 @@ const Post = ({ post }) => {
 		},
 	});
 
+	// 2. LIKING POST - send postId in backend
 	const { mutate: likePost, isPending: isLiking } = useMutation({
 		mutationFn: async () => {
 			try {
@@ -78,6 +82,7 @@ const Post = ({ post }) => {
 		},
 	});
 
+	// 3. COMMENT ON POST - send postId in backend through URL/params and text through request body
 	const { mutate: commentPost, isPending: isCommenting } = useMutation({
 		mutationFn: async () => {
 			try {
@@ -112,6 +117,22 @@ const Post = ({ post }) => {
 		deletePost();
 	};
 
+/* 
+* Mutation State: 
+"isCommenting" and "isLiking" should be used to check if the mutation is in progress to prevent multiple submissions.
+
+* Initial State: 
+The mutation state variables (isCommenting and isLiking) are initially false and become true when the mutation starts, and back to false once it ends.
+
+
+* *** HOW TO USE IT ***
+* Initial Check: 
+The if (isCommenting) return; ensures the function exits if a comment is already being posted.
+* Mutation Execution: 
+commentPost() or likePost() ``triggers`` the mutation, setting isCommenting or isLiking to true immediately.
+
+ */
+
 	const handlePostComment = (e) => {
 		e.preventDefault();
 		if (isCommenting) return;
@@ -127,20 +148,26 @@ const Post = ({ post }) => {
 		<>
 			<div className='flex gap-2 items-start p-4 border-b border-gray-700'>
 				<div className='avatar'>
+
 					<Link to={`/profile/${postOwner.username}`} className='w-8 rounded-full overflow-hidden'>
 						<img src={postOwner.profileImg || "/avatar-placeholder.png"} />
 					</Link>
+
 				</div>
+
 				<div className='flex flex-col flex-1'>
 					<div className='flex gap-2 items-center'>
+
 						<Link to={`/profile/${postOwner.username}`} className='font-bold'>
 							{postOwner.fullName}
 						</Link>
+
 						<span className='text-gray-700 flex gap-1 text-sm'>
 							<Link to={`/profile/${postOwner.username}`}>@{postOwner.username}</Link>
 							<span>·</span>
 							<span>{formattedDate}</span>
 						</span>
+
 						{isMyPost && (
 							<span className='flex justify-end flex-1'>
 								{!isDeleting && (
@@ -151,8 +178,11 @@ const Post = ({ post }) => {
 							</span>
 						)}
 					</div>
+
 					<div className='flex flex-col gap-3 overflow-hidden'>
+
 						<span>{post.text}</span>
+						
 						{post.img && (
 							<img
 								src={post.img}
@@ -161,17 +191,22 @@ const Post = ({ post }) => {
 							/>
 						)}
 					</div>
+
 					<div className='flex justify-between mt-3'>
 						<div className='flex gap-4 items-center w-2/3 justify-between'>
 							<div
 								className='flex gap-1 items-center cursor-pointer group'
 								onClick={() => document.getElementById("comments_modal" + post._id).showModal()}
 							>
+
 								<FaRegComment className='w-4 h-4  text-slate-500 group-hover:text-sky-400' />
+
 								<span className='text-sm text-slate-500 group-hover:text-sky-400'>
 									{post.comments.length}
 								</span>
+
 							</div>
+
 							{/* We're using Modal Component from DaisyUI */}
 							<dialog id={`comments_modal${post._id}`} className='modal border-none outline-none'>
 								<div className='modal-box rounded border border-gray-600'>
