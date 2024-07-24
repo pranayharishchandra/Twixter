@@ -1,0 +1,36 @@
+TODO 02 - FOR CONSISTENCY: USE HOOKS, 
+NOW: you are fetching in component 1 and using that cached data in component 2
+
+HOOK CODE
+import { useQuery } from "@tanstack/react-query";
+
+const usePosts = () => {
+    return useQuery({
+        queryKey: ["posts"],
+        queryFn: async () => {
+            const res = await fetch("/api/posts");
+            const data = await res.json();
+
+            if (!res.ok) {
+                throw new Error(data.error || "Something went wrong");
+            }
+
+            return data;
+        },
+    });
+};
+
+export default usePosts;
+
+ -- -- -- -- - -- -- --
+ Component 1:
+import usePosts from './usePosts';
+
+const Component1 = () => {
+    const { data: posts, isLoading } = usePosts();
+
+    if (isLoading) {
+
+==================================================================
+
+TODO 02 - 

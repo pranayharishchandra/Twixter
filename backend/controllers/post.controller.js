@@ -58,6 +58,8 @@ export const deletePost = async (req, res) => {
 		}
 
 		await Post.findByIdAndDelete(req.params.id);
+//* await post.remove(); // you can use post.remove() instead of findByIdAndDelete
+
 
 		res.status(200).json({ message: "Post deleted successfully" });
 	} catch (error) {
@@ -93,6 +95,9 @@ export const commentOnPost = async (req, res) => {
 	}
 };
 
+// POST 
+// /api/posts/like/:id
+// do both like and unlike - by checking if the user already like the post
 export const likeUnlikePost = async (req, res) => {
 	try {
 		const userId         = req.user._id; // my (the user seeing post) id
@@ -170,9 +175,9 @@ export const getAllPosts = async (req, res) => {
 	}
 };
 
-//  POST 
+//  GET 
 //  /api/posts/likes/:id
-//  finds all posts whose IDs are in the likedPosts array of the user
+//  finds all liked posts by some user (req.params.id)
 export const getLikedPosts = async (req, res) => {
 	const userId = req.params.id;
 

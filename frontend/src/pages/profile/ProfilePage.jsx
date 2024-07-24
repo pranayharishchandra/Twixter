@@ -30,12 +30,7 @@ const ProfilePage = () => {
 	const { follow, isPending } = useFollow();
 	const { data: authUser } = useQuery({ queryKey: ["authUser"] });
 
-	const {
-		data: user,
-		isLoading,
-		refetch,
-		isRefetching,
-	} = useQuery({
+	const { data: user, isLoading, refetch, isRefetching, } = useQuery({
 		queryKey: ["userProfile"],
 		queryFn: async () => {
 			try {

@@ -23,6 +23,22 @@ ReactDOM.createRoot(document.getElementById("root")).render(
 	</React.StrictMode>
 );
 
+/* HOW TO USE REACT QUERY
+* Mutation State: 
+"isCommenting" and "isLiking" should be used to check if the mutation is in progress to prevent multiple submissions.
+
+* Initial State: 
+The mutation state variables (isCommenting and isLiking) are initially false and become true when the mutation starts, and back to false once it ends.
+
+
+* *** HOW TO USE IT ***
+* Initial Check: 
+The if (isCommenting) return; ensures the function exits if a comment is already being posted.
+* Mutation Execution: 
+commentPost() or likePost() ``triggers`` the mutation, setting isCommenting or isLiking to true immediately.
+
+ */
+
 /**  VERY IMPORTANT CONCEPT
 ** ========================================================================
 // First Component
@@ -50,8 +66,7 @@ const { data: authUser } = useQuery({
 ** The second component will use the cached data without needing its own queryFn.
 */
 
-/* 
-* QUESTION 1 refetchOnWindowFocus
+/*  QUESTION 1 refetchOnWindowFocus
 * 1. refetchOnWindowFocus Default Value:
 Yes, the default value of refetchOnWindowFocus in React Query (or TanStack Query) is true. This means that by default, queries will refetch their data when the window regains focus.
 
@@ -59,7 +74,7 @@ Yes, the default value of refetchOnWindowFocus in React Query (or TanStack Query
 Yes, if refetchOnWindowFocus is set to true (which is the default), then the query will refetch when you switch tabs or desktops and then return to the original tab. This can lead to the data being re-fetched and the components using that data being re-rendered.
  */
 
-/*
+/* Will it create ambiguity?
 * 2) Question:
 You are using useQuery with queryKey: ["authUser"] in two different components. 
 Is this the same function? 

@@ -51,6 +51,7 @@ const Post = ({ post }) => {
 	const { mutate: likePost, isPending: isLiking } = useMutation({
 		mutationFn: async () => {
 			try {
+				// post.controler.js: likeUnlikePost
 				const res = await fetch(`/api/posts/like/${post._id}`, {
 					method: "POST",
 				});
@@ -64,12 +65,14 @@ const Post = ({ post }) => {
 			}
 		},
 		onSuccess: (updatedLikes) => {
-			// this is not the best UX, bc it will refetch all posts
-			// queryClient.invalidateQueries({ queryKey: ["posts"] });
+			//* this is not the best UX, bc it will refetch all posts
+			//* queryClient.invalidateQueries({ queryKey: ["posts"] });
 
 			// instead, update the cache directly for that post
 			queryClient.setQueryData(["posts"], (oldData) => {
 				return oldData.map((p) => {
+					//* "oldData" means the cached data,  
+					// find the current post and update the likes on that post in the frontend 
 					if (p._id === post._id) {
 						return { ...p, likes: updatedLikes };
 					}
@@ -116,22 +119,6 @@ const Post = ({ post }) => {
 	const handleDeletePost = () => {
 		deletePost();
 	};
-
-/* 
-* Mutation State: 
-"isCommenting" and "isLiking" should be used to check if the mutation is in progress to prevent multiple submissions.
-
-* Initial State: 
-The mutation state variables (isCommenting and isLiking) are initially false and become true when the mutation starts, and back to false once it ends.
-
-
-* *** HOW TO USE IT ***
-* Initial Check: 
-The if (isCommenting) return; ensures the function exits if a comment is already being posted.
-* Mutation Execution: 
-commentPost() or likePost() ``triggers`` the mutation, setting isCommenting or isLiking to true immediately.
-
- */
 
 	const handlePostComment = (e) => {
 		e.preventDefault();
@@ -214,7 +201,7 @@ commentPost() or likePost() ``triggers`` the mutation, setting isCommenting or i
 									<div className='flex flex-col gap-3 max-h-60 overflow-auto'>
 										{post.comments.length === 0 && (
 											<p className='text-sm text-slate-500'>
-												No comments yet 🤔 Be the first one 😉
+												No comments yet, Be the first one.
 											</p>
 										)}
 										{post.comments.map((comment) => (
@@ -262,10 +249,14 @@ commentPost() or likePost() ``triggers`` the mutation, setting isCommenting or i
 								<span className='text-sm text-slate-500 group-hover:text-green-500'>0</span>
 							</div>
 							<div className='flex gap-1 items-center group cursor-pointer' onClick={handleLikePost}>
+
+{/* !isLiking && !isLiked - first there should be "no loading" and then checking if "like" */}
 								{isLiking && <LoadingSpinner size='sm' />}
+
 								{!isLiked && !isLiking && (
 									<FaRegHeart className='w-4 h-4 cursor-pointer text-slate-500 group-hover:text-pink-500' />
 								)}
+
 								{isLiked && !isLiking && (
 									<FaRegHeart className='w-4 h-4 cursor-pointer text-pink-500 ' />
 								)}
@@ -289,3 +280,6 @@ commentPost() or likePost() ``triggers`` the mutation, setting isCommenting or i
 	);
 };
 export default Post;
+
+/*
+* !isLiking && !isLiked - first there should be "no loading" and then checking if "like"*/

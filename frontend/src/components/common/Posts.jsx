@@ -21,12 +21,7 @@ const Posts = ({ feedType, username, userId }) => {
 
 	const POST_ENDPOINT = getPostEndpoint();
 
-	const {
-		data: posts,
-		isLoading,
-		refetch,
-		isRefetching,
-	} = useQuery({
+	const { data: posts, isLoading, refetch, isRefetching, } = useQuery({
 		queryKey: ["posts"],
 		queryFn: async () => {
 			try {
@@ -82,7 +77,7 @@ export default Posts;
 
 
 /** 
-// /api/posts/likes/${userId
+// /api/posts/likes/${userId}
 export const getLikedPosts = async (req, res) => {
 	const userId = req.params.id;
 
