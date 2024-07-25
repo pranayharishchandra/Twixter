@@ -48,6 +48,7 @@ const RightPanel = () => {
 								className='flex items-center justify-between gap-4'
 								key={user._id}
 							>
+
 								<div className='flex gap-2 items-center'>
 									<div className='avatar'>
 										<div className='w-8 rounded-full'>
@@ -72,6 +73,7 @@ const RightPanel = () => {
 										{isPending ? <LoadingSpinner size='sm' /> : "Follow"}
 									</button>
 								</div>
+								
 							</Link>
 						))}
 				</div>

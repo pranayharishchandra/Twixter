@@ -127,6 +127,7 @@ const Post = ({ post }) => {
 	};
 
 	const handleLikePost = () => {
+		// it's not a form
 		if (isLiking) return;
 		likePost();
 	};

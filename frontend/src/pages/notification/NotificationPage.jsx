@@ -9,16 +9,19 @@ import { FaUser } from "react-icons/fa";
 import { FaHeart } from "react-icons/fa6";
 
 const NotificationPage = () => {
+
 	const queryClient = useQueryClient();
+
 	const { data: notifications, isLoading } = useQuery({
 		queryKey: ["notifications"],
 		queryFn: async () => {
 			try {
-				const res = await fetch("/api/notifications");
+				const res  = await fetch("/api/notifications");
 				const data = await res.json();
 				if (!res.ok) throw new Error(data.error || "Something went wrong");
 				return data;
-			} catch (error) {
+			} 
+			catch (error) {
 				throw new Error(error);
 			}
 		},
@@ -71,13 +74,15 @@ const NotificationPage = () => {
 						<LoadingSpinner size='lg' />
 					</div>
 				)}
-				{notifications?.length === 0 && <div className='text-center p-4 font-bold'>No notifications 🤔</div>}
+				{notifications?.length === 0 && <div className='text-center p-4 font-bold'>No notifications </div>}
+
 				{notifications?.map((notification) => (
 					<div className='border-b border-gray-700' key={notification._id}>
 						<div className='flex gap-2 p-4'>
 							{notification.type === "follow" && <FaUser className='w-7 h-7 text-primary' />}
 							{notification.type === "like" && <FaHeart className='w-7 h-7 text-red-500' />}
 							<Link to={`/profile/${notification.from.username}`}>
+								
 								<div className='avatar'>
 									<div className='w-8 rounded-full'>
 										<img src={notification.from.profileImg || "/avatar-placeholder.png"} />
@@ -87,10 +92,12 @@ const NotificationPage = () => {
 									<span className='font-bold'>@{notification.from.username}</span>{" "}
 									{notification.type === "follow" ? "followed you" : "liked your post"}
 								</div>
+
 							</Link>
 						</div>
 					</div>
 				))}
+
 			</div>
 		</>
 	);

@@ -253,3 +253,16 @@ export const getUserPosts = async (req, res) => {
 		res.status(500).json({ error: "Internal server error" });
 	}
 };
+
+/*
+Flow of Image Upload:
+- User selects an image using the file input.
+*- Frontend reads the file and converts it to a Base64-encoded string.
+- Frontend sends the image data to the backend as part of the request body.
+- Backend processes the image data:
+		> Deletes any existing images from Cloudinary.
+		> Uploads the new images to Cloudinary.
+*	  > Updates the user record with the new image URLs.
+- Backend sends the updated user data back to the frontend.
+- Frontend updates the UI with the new images and user data.
+ */

@@ -21,6 +21,7 @@ const useFollow = () => {
 			}
 		},
 		onSuccess: () => {
+			//? i think it's sync and we don't need to resolve promise
 			Promise.all([
 				queryClient.invalidateQueries({ queryKey: ["suggestedUsers"] }),
 				queryClient.invalidateQueries({ queryKey: ["authUser"] }),

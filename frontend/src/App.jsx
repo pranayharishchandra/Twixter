@@ -20,7 +20,7 @@ function App() {
 		queryKey: ["authUser"],
 		queryFn : async () => {
 			try {
-				const res  = await fetch("/api/auth/me");
+				const res  = await fetch("/api/auth/me"); // by default, the fetch function in JavaScript makes a GET request and expects a response in application/json 
 				const data = await res.json();
 
 				if (data.error) return null;

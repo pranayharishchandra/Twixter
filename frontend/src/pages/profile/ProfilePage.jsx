@@ -18,17 +18,20 @@ import useFollow            from "../../hooks/useFollow";
 import useUpdateUserProfile from "../../hooks/useUpdateUserProfile";
 
 const ProfilePage = () => {
-	const [coverImg, setCoverImg] = useState(null);
+	const [coverImg, setCoverImg]     = useState(null);
 	const [profileImg, setProfileImg] = useState(null);
-	const [feedType, setFeedType] = useState("posts");
+	const [feedType, setFeedType]     = useState("posts");
 
-	const coverImgRef = useRef(null);
+	const coverImgRef   = useRef(null); // buttons are ugly, so disappear them and use the icons to click button by refering 
 	const profileImgRef = useRef(null);
+
+	//* <Route path = '/profile/:username' element = { authUser ? <ProfilePage /> : <Navigate to='/login' />} />
 
 	const { username } = useParams();
 
 	const { follow, isPending } = useFollow();
-	const { data: authUser } = useQuery({ queryKey: ["authUser"] });
+	// TODO: IT WAS BETTER IF IT WAS A HOOK "useAuthUser" having this 
+	const { data: authUser }    = useQuery({ queryKey: ["authUser"] });
 
 	const { data: user, isLoading, refetch, isRefetching, } = useQuery({
 		queryKey: ["userProfile"],
@@ -48,18 +51,30 @@ const ProfilePage = () => {
 
 	const { isUpdatingProfile, updateProfile } = useUpdateUserProfile();
 
-	const isMyProfile = authUser._id === user?._id;
+	const isMyProfile     = authUser._id === user?._id;
 	const memberSinceDate = formatMemberSinceDate(user?.createdAt);
-	const amIFollowing = authUser?.following.includes(user?._id);
+	const amIFollowing    = authUser?.following.includes(user?._id);
 
+	//* 1. Handling File Selection: Once the user selects a file, the onChange event of the file input is triggered, and the handleImgChange function is called.
 	const handleImgChange = (e, state) => {
+		//* 2. because we can select the array of files (multiple files) as well so we will select only the 1st file
 		const file = e.target.files[0];
+
 		if (file) {
+
+			//* 3. Reading the File: The FileReader reads the file as a data URL. This does not open any new windows or dialogs; it simply reads the file's contents into memory.
 			const reader = new FileReader();
+
+			//* 4. It reads the selected file using FileReader.
+			//* Once the file is read, it sets the corresponding state variable (coverImg or profileImg) with the Base64-encoded image data.
+
+			//* Sets up the onload event handler for the FileReader. This function will execute when the file has been successfully read.
 			reader.onload = () => {
 				state === "coverImg"   && setCoverImg(reader.result);
 				state === "profileImg" && setProfileImg(reader.result);
 			};
+
+			//* 5. Starts reading the file as a data URL. This will trigger the onload event when the reading is complete.
 			reader.readAsDataURL(file);
 		}
 	};
@@ -88,11 +103,17 @@ const ProfilePage = () => {
 							</div>
 							{/* COVER IMG */}
 							<div className='relative group/cover'>
+								{/* PRIORITY ORDER: 
+											1. if the user just selected an image
+											2. if the already had a cover image
+											3. if both are false then - "default image"
+								 */}
 								<img
 									src={coverImg || user?.coverImg || "/cover.png"}
 									className='h-52 w-full object-cover'
 									alt='cover image'
 								/>
+								{/* if current profile is my profile, then i should be able to edit my profile (show me pencile/edit icon) */}
 								{isMyProfile && (
 									<div
 										className='absolute top-2 right-2 rounded-full p-2 bg-gray-800 bg-opacity-75 cursor-pointer opacity-0 group-hover/cover:opacity-100 transition duration-200'
@@ -102,9 +123,12 @@ const ProfilePage = () => {
 									</div>
 								)}
 
-								{/* background image, 
+								{/* 
+								- background image, 
 								&& accpets only images
-								&& when clicked on the icon, using "coverImgRef" this gets clicked, so it's made hidden as it looks ugly */}
+								&& when clicked on the icon, using "coverImgRef" this gets clicked, so it's made hidden as it looks ugly
+								
+								*** - The browser opens a file selection dialog where the user can choose an image file. This dialog is native to the browser and does not involve the FileReader.*/}
 								<input
 									type='file'
 									hidden
@@ -128,6 +152,7 @@ const ProfilePage = () => {
 									<div className='w-32 rounded-full relative group/avatar'>
 										<img src={profileImg || user?.profileImg || "/avatar-placeholder.png"} />
 										<div className='absolute top-5 right-3 p-1 bg-primary rounded-full group-hover/avatar:opacity-100 opacity-0 cursor-pointer'>
+											{/* if current profile is my profile, then i should be able to edit my profile (show me pencile/edit icon) */}
 											{isMyProfile && (
 												<MdEdit
 													className='w-4 h-4 text-white'
@@ -139,14 +164,15 @@ const ProfilePage = () => {
 								</div>
 							</div>
 							<div className='flex justify-end px-4 mt-5'>
+								{/* if current profile is my profile, then i should be able to edit my profile (show me pencile/edit icon) */}
 								{isMyProfile && <EditProfileModal authUser={authUser} />}
 								{!isMyProfile && (
 									<button
 										className='btn btn-outline rounded-full btn-sm'
 										onClick={() => follow(user?._id)}
 									>
-										{isPending && "Loading..."}
-										{!isPending && amIFollowing && "Unfollow"}
+										{isPending  && "Loading..."}
+										{!isPending &&  amIFollowing && "Unfollow"}
 										{!isPending && !amIFollowing && "Follow"}
 									</button>
 								)}

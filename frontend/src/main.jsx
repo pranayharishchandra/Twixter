@@ -23,6 +23,46 @@ ReactDOM.createRoot(document.getElementById("root")).render(
 	</React.StrictMode>
 );
 
+/* use "mutateAsync" better than "mutate" everywhere tension free that is better 
+makes your code more readable, see the next comment to know the syntax (to be used) */
+
+/** mutateAsync
+ 
+** Using mutate instead of mutateAsync is not wrong, but it changes how you handle the mutation. Here’s a comparison of how you would use each:
+Using mutate
+With mutate, you handle the mutation in a fire-and-forget manner, typically using callbacks for success and error handling.
+
+** With mutateAsync, you can use ``async/await`` to handle the mutation, which can make the code more readable and easier to manage, especially if you need to perform additional asynchronous operations after the mutation.
+
+
+The mutateAsync function is similar to mutate, but it returns a promise, allowing you to use async/await syntax for better control over asynchronous operations. Here's a brief comparison:
+
+**  1. mutate
+Usage: Typically used for fire-and-forget operations.
+Returns: Nothing (void).
+** Example:
+    mutate(formData, {
+        onSuccess: () => {
+            // Handle success
+        },
+        onError: (error) => {
+            // Handle error
+        }
+    });
+
+** 2. mutateAsync
+Usage: Used when you need to await the mutation and handle the result or error in a more controlled manner.
+Returns: A promise that resolves with the mutation result or rejects with an error.
+** Example:
+    try {
+        const result = await mutateAsync(formData);
+        // Handle success
+    } catch (error) {
+        // Handle error
+    }
+
+*/
+
 /* HOW TO USE REACT QUERY
 * Mutation State: 
 "isCommenting" and "isLiking" should be used to check if the mutation is in progress to prevent multiple submissions.

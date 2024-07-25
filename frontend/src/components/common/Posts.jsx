@@ -12,6 +12,7 @@ const Posts = ({ feedType, username, userId }) => {
 
 			case "following": return "/api/posts/following";					// only of the users i am following
 
+			//* profilePage.jsx
 			case "posts"    : return `/api/posts/user/${username}`;		// posts from a perticular user
 
 			case "likes"    : return `/api/posts/likes/${userId}`;		// finds all posts whose IDs are in the likedPosts array of the user.
@@ -58,7 +59,7 @@ const Posts = ({ feedType, username, userId }) => {
 
 			{/* if fetching and re-fetching is completed then if we have found there is no posts i.e. posts?.length === 0 then show message no posts */}
 			{!isLoading && !isRefetching && posts?.length === 0 && (
-				<p className='text-center my-4'>No posts</p>
+				<p className='text-center my-4'>No posts to show</p>
 			)}
 
 			

@@ -27,6 +27,7 @@ export const followUnfollowUser = async (req, res) => {
 		
 		if (!userToModify || !currentUser) return res.status(400).json({ error: "User not found" });
 
+		//* not an error but a bad request
 		if (id === req.user._id.toString()) {
 			return res.status(400).json({ error: "You can't follow/unfollow yourself" });
 		}
@@ -61,7 +62,9 @@ export const followUnfollowUser = async (req, res) => {
 	}
 };
 
+
 export const getSuggestedUsers = async (req, res) => {
+	//* suggested users = allUsers - myFollowingUsers - me
 	try {
 		const userId = req.user._id;
 
@@ -100,8 +103,11 @@ export const updateUser = async (req, res) => {
 		}
 
 		if (currentPassword && newPassword) {
+			//* will hash the currentPassword and will match it with the user.password
 			const isMatch = await bcrypt.compare(currentPassword, user.password);
+
 			if (!isMatch) return res.status(400).json({ error: "Current password is incorrect" });
+			
 			if (newPassword.length < 6) {
 				return res.status(400).json({ error: "Password must be at least 6 characters long" });
 			}
