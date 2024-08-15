@@ -13,8 +13,11 @@ import { Toaster }    from "react-hot-toast";
 import { useQuery }   from "@tanstack/react-query";
 import LoadingSpinner from "./components/common/LoadingSpinner";
 
+//*** Correct, in React Query, there is no centralized store like in Redux Toolkit (RTK). However, React Query provides a cache that behaves somewhat similarly for managing and sharing server state across components. 
+
 function App() {
 	//* change according to authUser - loggedIn or not - since we will show then "protected routes" accourdingly
+	// *** useQuery hook with the queryKey: ["authUser"] is used in the App component, which acts as the parent component.
 	const { data: authUser, isLoading } = useQuery({
 		// we use queryKey to give a unique name to our query and refer to it later
 		queryKey: ["authUser"],
